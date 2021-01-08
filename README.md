@@ -65,7 +65,7 @@ Statische Integritätsbed. auf Tabellen (bzgl. Attributen):
 - **CHECK**: Nachbedingung
 
 ```sql
-CREATE VERLAG
+CREATE TABLE VERLAG
 (
     VerlagsID   INT,
     Verlagsname VARCHAR(15)
@@ -85,9 +85,10 @@ CREATE TABLE Buch
 
 ALTER TABLE Buch
     ADD CONSTRAINT c_BuchFK FOREIGN KEY(Verlag) REFERENCES Verlag(Verlagsname)
-    ON DELETE RESTRICT ON UPDATE RESTRICT; /* Man kann nichts an diesem FK ändern (RESTRICT)! */
+    ON DELETE RESTRICT ON UPDATE RESTRICT; /*Man kann also nichts an diesem FK ändern (RESTRICT)*/
 
-ALTER TABLE Buch DROP CONSTRAINT c_checkJahr;
+ALTER TABLE Buch 
+    DROP CONSTRAINT c_checkJahr;
 ```
 
 ## TRUNCATE
@@ -112,7 +113,7 @@ TRUNCATE TABLE Buch;
 
 1. Selektieren alle Spalten einer Tabelle (DISTINCT)
 
-- Die Option DISTINCT bewirkt, dass doppelte Zeilen aus der Ergebnis-tabelle eliminiert werden
+- DISTINCT bewirkt, dass doppelte Zeilen aus der Ergebnis-tabelle eliminiert werden
 
 ```sql
 SELECT DISTINCT * FROM Mitarbeiter;
@@ -149,4 +150,12 @@ FROM angestellter;
 ```sql
 SELECT e_nr, e-bez, length(e_bez) as clength
 FROM eteil
+```
+
+5. Selektion auf Mengen
+
+```sql
+SELECT ab_datum, f_bez
+FROM abflug
+WHERE ab_datum IN ('13.05.01', '14.05.01');
 ```
