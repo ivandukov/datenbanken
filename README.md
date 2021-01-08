@@ -2,20 +2,20 @@
 
 ## Datentypen
 
-- **int** (integer4, int)
-- **smallint** (integer2)
-- **real** (wie float)
-- **decimal(p,q)** und **numeric**(p,q) mit jeweils p Stellen gesamt und davon q Nachkommastellen
-- **char(n)** für Strings fester Länge n
-- **varchar(n)** für Strings variabler Länge bis zur max. Länge n
-- **bit(n)** oder **bit varying(n)** analog für Bitfolgen
-- **date, time/timestamp** für Datum-, Zeit- & kombinierte Datums-Zeit-Angaben
-- **blob** für sehr große binäre Dateien
-- **text** für sehr große Strings
+- **INT** (integer4, int)
+- **SMALLINT** (integer2)
+- **REAL** (wie float)
+- **DECIMAL(p,q)** und **NUMERIC**(p,q) mit jeweils p Stellen gesamt und davon q Nachkommastellen
+- **CHAR(n)** für Strings fester Länge n
+- **VARCHAR(n)** für Strings variabler Länge bis zur max. Länge n
+- **BIT(n)** oder **BIT VARYING(n)** analog für Bitfolgen
+- **DATE, TIME/TIMESTAMP** für Datum-, Zeit- & kombinierte Datums-Zeit-Angaben
+- **BLOB** für sehr große binäre Dateien
+- **TEXT** für sehr große Strings
 
 ## Data Definition Language (DDL)
 
-### Create
+### CREATE
 
 ```sql
 CREATE TABLE Mitarbeiter
@@ -26,14 +26,14 @@ CREATE TABLE Mitarbeiter
 );
 ```
 
-### Insert 
+### INSERT 
 
 ```sql
 INSERT INTO Mitarbeiter
 Values (1,'Gordon Freeman','2018-01-10');
 ```
 
-### Delete 
+### DELETE 
 
 - RESTRICT: DROP wird nur ausgeführt, wenn die Tabelle von keiner anderen referenziert wird
 
@@ -47,14 +47,14 @@ DROP TABLE Mitarbeiter RESTRICT;
 DROP TABLE Mitarbeiter CASCADE;
 ```
 
-### Alter
+### ALTER
 
 ```sql
 ALTER TABLE Mitarbeiter ADD Kinder INT;
 ALTER TABLE Mitarbeiter DROP Kinder;
 ```
 
-### Constraints
+### CONSTRAINTS
 
 Statische Integritätsbed. auf Tabellen (bzgl. Attributen):
 
@@ -90,7 +90,7 @@ ALTER TABLE Buch
 ALTER TABLE Buch DROP CONSTRAINT c_checkJahr;
 ```
 
-## Truncate
+## TRUNCATE
 
 - Löscht Tabellen**inhalte**, nicht die Tabellenstruktur selbst (im Vgl. zu DROP TABLE)!
 - Berücksichtigt keine ON DELETE-Trigger, kann also nicht angewandt werden für Tabellen, die von anderen Tabellen referenziert werden
@@ -101,7 +101,7 @@ TRUNCATE TABLE Buch;
 
 ## Data Manipulation Language (DML)
 
-### Select Operator
+### SELECT
 
 - Mit Hilfe des Select-Operators können Informationen aus der Datenbank ausgelesen werden.
 
