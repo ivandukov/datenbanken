@@ -13,48 +13,48 @@
 - **BLOB** für sehr große binäre Dateien
 - **TEXT** für sehr große Strings
 
-## Data Definition Language (DDL)
-
-### CREATE
+## CREATE
 
 ```sql
 CREATE TABLE Mitarbeiter
 (
-    Personalnummer INT,
-    Name VARCHAR(20),
-    Geburtsdatum DATE
+    personalnummer INT,
+    vorname VARCHAR(20),
+    nachname VARCHAR(20),
+    geburtsdatum DATE
+    gehalt DECIMAL
 );
 ```
 
-### INSERT 
+## INSERT 
 
 ```sql
 INSERT INTO Mitarbeiter
-Values (1,'Gordon Freeman','2018-01-10');
+VALUES (1,'Gordon', 'Freeman','2018-01-10', 100.0);
 ```
 
-### DELETE 
+## DROP TABLE 
 
-- RESTRICT: DROP wird nur ausgeführt, wenn die Tabelle von keiner anderen referenziert wird
+- RESTRICT: Tabelle wird nur gelöscht, wenn sie von keiner anderen referenziert wird
 
 ```sql
 DROP TABLE Mitarbeiter RESTRICT;
 ```
 
-- CASCADE: Die gesamte Tabelle, sowie die FK-Constraints der referenzierenden Tabelle(n) werden gelöscht
+- CASCADE: Gesamte Tabelle, sowie FK-Constraints der referenzierenden Tabelle(n) werden gelöscht
 
 ```sql
 DROP TABLE Mitarbeiter CASCADE;
 ```
 
-### ALTER
+## ALTER TABLE
 
 ```sql
 ALTER TABLE Mitarbeiter ADD Kinder INT;
 ALTER TABLE Mitarbeiter DROP Kinder;
 ```
 
-### CONSTRAINTS
+## CONSTRAINTS
 
 Statische Integritätsbed. auf Tabellen (bzgl. Attributen):
 
@@ -93,16 +93,14 @@ ALTER TABLE Buch
 
 ## TRUNCATE
 
-- Löscht Tabellen**inhalte**, nicht die Tabellenstruktur selbst (im Vgl. zu DROP TABLE)!
+- Löscht Tabellen**inhalte**, nicht die Tabellenstruktur selbst!
 - Berücksichtigt keine ON DELETE-Trigger, kann also nicht angewandt werden für Tabellen, die von anderen Tabellen referenziert werden
 
 ```sql
 TRUNCATE TABLE Buch;
 ```
 
-## Data Manipulation Language (DML)
-
-### SELECT
+## SELECT
 
 - Mit Hilfe des Select-Operators können Informationen aus der Datenbank ausgelesen werden.
 
@@ -159,3 +157,24 @@ SELECT ab_datum, f_bez
 FROM abflug
 WHERE ab_datum IN ('13.05.01', '14.05.01');
 ```
+
+## ORDER BY
+```sql
+SELECT vorname, nachname FROM Mitarbeiter ORDER BY nachname;
+```
+
+## UPDATE
+
+```sql
+UPDATE Mitarbeiter SET gehalt = 50.00 WHERE nachname = 'Freeman';
+UPDATE Mitarbeiter SET gehalt = gehalt * 2 WHERE vorname = 'Gordon';
+```
+
+## DELETE
+
+```sql
+DELETE FROM Mitarbeiter WHERE personalnummer = 123; /*Löscht einzelne Zeile*/
+DELETE FROM Mitarbeiter /*Löscht alle Datensätze, aber nicht die Tabelle*/
+```
+
+## JOIN
