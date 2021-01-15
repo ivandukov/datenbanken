@@ -194,7 +194,7 @@ CREATE TABLE basket_a
     fruit_a VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE basket_a
+CREATE TABLE basket_b
 (
     b INT PRIMARY KEY,
     fruit_b VARCHAR(100) NOT NULL
