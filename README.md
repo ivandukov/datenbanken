@@ -303,3 +303,22 @@ ON fruit_a = fruit_b;
 ```
 
 ```FULL OUTER JOIN ``` gibt alle Zeilen aus beiden Tabellen aus wenn sie gleich und ungleich sind. 
+
+## Spaltenfunktionen
+
+```sql
+SELECT COUNT(*) AS anzahl_Mitarbeiter 
+FROM Mitarbeiter;
+
+SELECT SUM(gehalt) AS summe_gehalt
+FROM Mitarbeiter;
+
+SELECT AVG(gehalt) AS avg_gehalt
+FROM Mitarbeiter;
+
+SELECT MIN(gehalt) AS max_gehalt
+FROM Mitarbeiter;
+
+SELECT MAX(gehalt) AS min_gehalt
+FROM Mitarbeiter;
+```
