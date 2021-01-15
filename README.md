@@ -310,6 +310,9 @@ ON fruit_a = fruit_b;
 SELECT COUNT(*) AS anzahl_Mitarbeiter 
 FROM Mitarbeiter;
 
+SELECT COUNT(DISTINCT vorname) AS distinct_vorname
+FROM Mitarbeiter;
+
 SELECT SUM(gehalt) AS summe_gehalt
 FROM Mitarbeiter;
 
@@ -321,4 +324,31 @@ FROM Mitarbeiter;
 
 SELECT MAX(gehalt) AS min_gehalt
 FROM Mitarbeiter;
+```
+
+## GROUP BY
+
+Wenn man Spaltenfunktionen (z.B: SUM()) 
+
+```sql
+SELECT COUNT(a) AS anzahl FROM basket_a /*Funktioniert wie gewohnt*/
+SELECT fruit_a, COUNT(a) AS anzahl FROM basket_a GROUP BY a; /*ohne GROUP BY würde dieses Statement nicht funktionieren*/
+```
+
+## HAVING
+
+Folgendes ist wichtig für ```GROUP BY```:
+
+- ```WHERE``` filtert auf **Zeilenebene VOR** dem Gruppieren
+
+- ```HAVING``` filtert auf **Gruppenebene NACH** dem Gruppieren
+
+Beispiel:
+
+```sql
+SELECT vorname, nachname, AVG(gehalt) AS average
+FROM Mitarbeiter
+WHERE geburtsdatum IN ('13.05.01','14.05.01') /*filtert alle Mitarbeiter mit Geburtstag am 13.5.01 und 14.05.01 VOR dem internen SORT und GROUP BY*/
+GROUP BY nachname
+HAVING AVG(gehalt) > 12000.0; /*filtert alle Nachnamen mit AVG(gehalt) > 12000 NACH dem internene SORT und GROUP BY*/
 ```
