@@ -352,3 +352,103 @@ WHERE geburtsdatum IN ('13.05.01','14.05.01') /*filtert alle Mitarbeiter mit Geb
 GROUP BY nachname
 HAVING AVG(gehalt) > 12000.0; /*filtert alle Nachnamen mit AVG(gehalt) > 12000 NACH dem internene SORT und GROUP BY*/
 ```
+## Mengenoperationen
+
+- **Vereinigung**: 
+```sql
+SELECT... FROM... WHERE...
+UNION 
+SELECT... FROM... WHERE...
+```
+- **Differenz**:
+```sql
+SELECT... FROM... WHERE...
+EXCEPT 
+SELECT... FROM... WHERE...
+```
+- **Durchschnitt**:
+```sql
+SELECT... FROM... WHERE...
+INTERSECT 
+SELECT... FROM... WHERE...
+```
+
+Beispiel:
+
+```sql
+CREATE TABLE top_rated_films
+(
+    title VARCHAR(50) NOT NULL,
+    release_year INT
+);
+
+CREATE TABLE most_popular_films
+(
+    title VARCHAR(50) NOT NULL,
+    release_year INT
+);
+```
+
+top_rated_films:
+
+- (Matrix, 1999)
+- (IT, 2017)
+- (Shrek, 2001)
+- (The Godfather, 1972)
+
+most_popular_films:
+- (Shrek, 2001)
+- (All eyez on Me, 2017)
+- (The Godfather, 1972)
+
+
+### **INTERSECT**
+```sql
+SELECT * FROM most_popular_films
+INTERSECT
+SELECT * FROM top_rated_films
+
+/* Ausgabe:
+    title           release_year
+    ========================
+    Shrek           2001
+    ________________________
+    The Godfather   1972
+*/
+```
+
+### **UNION**
+```sql
+SELECT * FROM most_popular_films
+UNION
+SELECT * FROM top_rated_films
+
+/* Ausgabe:
+title           release_year
+========================
+Shrek           2001
+________________________
+The Godfather   1972
+________________________
+Matrix          1999
+________________________
+All Eyez on me  2017
+________________________
+IT              2017 
+*/
+```
+
+### **EXCEPT**
+
+```sql
+SELECT * FROM most_popular_films
+EXCEPT
+SELECT * FROM top_rated_films
+
+/* Ausgabe:
+title           release_year
+========================
+All Eyez on me  2017
+________________________
+*/
+```
