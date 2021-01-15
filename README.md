@@ -265,9 +265,9 @@ RIGHT JOIN basket_b ON fruit_a = fruit_b;
 /* Ausgabe:
    a    fruit_a    b    fruit_b
    ============================
-   2    Orange     1    Orange 
+   2    Orange     1   Orange 
    ____________________________ 
-   1    Apple      2    Apple 
+   1    Apple      2   Apple 
    ____________________________
    null  null      3   Watermelon
    ____________________________
@@ -276,3 +276,30 @@ RIGHT JOIN basket_b ON fruit_a = fruit_b;
 ```
 
 ```RIGHT JOIN ``` vergleicht jedes ```fruit_a``` aus ```basket_a``` mit jedem ```fruit_b``` aus ```basket_b```. Wenn sie gleich sind werden sie wie bei ```INNER JOIN``` als eine Zeile ausgegeben. Jedoch wird auch eine neue Zeile gemacht, wenn sie NICHT gleich sind (siehe null Werte).
+
+### FULL OUTER JOIN
+
+```sql
+SELECT a, fruit_a, b, fruit_b
+FROM basket_a
+FULL OUTER JOIN basket_b
+ON fruit_a = fruit_b;
+
+/* Ausgabe:
+   a    fruit_a    b    fruit_b
+   ===============================
+   1    Apple      2    Apple 
+   _______________________________ 
+   2    Orange     1    Orange 
+   _______________________________
+   3    Banana    null   null  
+   _______________________________
+   4    Mango     null   null
+   _______________________________
+   null  null      3    Watermelon
+   _______________________________
+   null  null      4    Pear
+*/
+```
+
+```FULL OUTER JOIN ``` gibt alle Zeilen aus beiden Tabellen aus wenn sie gleich und ungleich sind. 
