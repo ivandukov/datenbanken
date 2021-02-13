@@ -164,6 +164,15 @@ SELECT first_name, last_name
 FROM customer
 WHERE first_name LIKE 'Jenny%';
 ```
+Patterns:
+
+```sql
+SELECT
+	'foo' LIKE 'foo', -- true
+	'foo' LIKE 'f%', -- true
+	'foo' LIKE '_o_', -- true
+	'bar' LIKE 'b_'; -- false
+```
 
 ## ORDER BY
 ```sql
