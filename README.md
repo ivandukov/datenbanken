@@ -157,6 +157,13 @@ SELECT ab_datum, f_bez
 FROM abflug
 WHERE ab_datum IN ('13.05.01', '14.05.01');
 ```
+## LIKE Clause
+
+```sql
+SELECT first_name, last_name
+FROM customer
+WHERE first_name LIKE 'Jenny%';
+```
 
 ## ORDER BY
 ```sql
