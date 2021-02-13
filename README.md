@@ -157,6 +157,16 @@ SELECT ab_datum, f_bez
 FROM abflug
 WHERE ab_datum IN ('13.05.01', '14.05.01');
 ```
+6. Selektion Prüfung auf NULL
+
+```sql
+/*Alle Tupel, in denen ein Tupel-Element NULL ist*/
+SELECT * FROM MCUDATA
+WHERE heroname IS NULL
+OR moviename IS NULL
+OR releaseyear IS NULL;
+```
+
 ## LIKE Clause
 
 ```sql
@@ -178,7 +188,13 @@ SELECT
 ```sql
 SELECT vorname, nachname FROM Mitarbeiter ORDER BY nachname;
 ```
+Mit Spaltenfunktion:
 
+```sql
+/*Sortiert alle Filmnamen nach Namenslänge absteigend*/
+SELECT moviename FROM MCUDATA
+ORDER BY LENGTH(moviename) asc;
+```
 ## UPDATE
 
 ```sql
