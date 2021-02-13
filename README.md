@@ -490,3 +490,47 @@ All Eyez on me  2017
 ________________________
 */
 ```
+
+# Beispielaufgaben
+
+## Abteilungen und Mitarbeiter
+![](beispieltabelle.png)
+
+```sql
+/*Finden Sie alle Abteilungsorte*/
+SELECT AORT FROM ABT;
+
+/*Finden Sie alle Angestellten (PNR, NAME), deren Manager die 
+Personalnummer 406 hat (MNR).*/
+SELECT PNR, NAME FROM PERS WHERE MNR = 406;
+
+/*Finden Sie alle Angestellten (PNR, ALTER, NAME), 
+die in einer Abteilung in Frankfurt arbeiten und 
+eine Personalnummer zw. 100 und 800 haben, sowie 
+ein Gehalt über 40k haben ODER 
+unter 30 sind*/
+SELECT PNR, ALTER, NAME FROM PERS 
+INNER JOIN ABT USING (ANR)
+WHERE 
+(AORT = 'Frankfurt' AND PNR BETWEEN 100 AND 800)
+AND (GEHALT > 40000 OR ALTER < 30);
+
+/*Finden Sie die Personalnummer des Chefs der Personalnummer 574*/
+SELECT MNR FROM PERS WHERE PNR = 574;
+
+/*Finden Sie alle Angestellten, deren Abteilungsort ein „a“ im Namen hat*/
+SELECT * FROM PERS 
+INNER JOIN ABT USING(ANR)
+WHERE ABT.ORT LIKE '%a%';
+
+/*Finden Sie alle Abteilungsorte, an denen kein Mitarbeiter arbeitet.*/
+SELECT AORT FROM ABT 
+LEFT JOIN PERS USING (ANR) /*Ungleiche Werte werden mit null angezeigt!!!*/
+WHERE PERS.PNR IS NULL;
+
+/*Finden Sie das durchschnittliche Gehalt aller Abteilungen*/
+SELECT ANAME, AVG(gehalt)
+FROM ABT
+INNER JOIN PERS USING (ANR);
+
+```
