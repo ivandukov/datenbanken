@@ -217,6 +217,8 @@ Varianten:
 - **RIGHT (OUTER) JOIN**: Returns all records from the RIGHT table and the matched records from the LEFT table 
 - **FULL (OUTER) JOIN**: Returns all recrords when there is a match in either LEFT or RIGHT table
 
+![](joins.png)
+
 Beispiel:
 
 ```sql
