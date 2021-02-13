@@ -336,6 +336,10 @@ ON fruit_a = fruit_b;
 
 ```FULL OUTER JOIN ``` gibt alle Zeilen aus beiden Tabellen aus wenn sie gleich und ungleich sind. 
 
+### USING Clause:
+
+"The USING clause is a shortcut that allows you to take advantage of the specific situation where both sides of the join use the same name for the joining column(s). It takes a comma-separated list of the shared column names and forms a join condition that includes an equality comparison for each one. For example, joining ```T1``` and ```T2``` with ```USING (a, b)``` produces the join condition ```ON T1.a = T2.a AND T1.b = T2.b.```"
+
 ## Spaltenfunktionen
 
 ```sql
