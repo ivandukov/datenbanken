@@ -529,8 +529,9 @@ LEFT JOIN PERS USING (ANR) /*Ungleiche Werte werden mit null angezeigt!!!*/
 WHERE PERS.PNR IS NULL;
 
 /*Finden Sie das durchschnittliche Gehalt aller Abteilungen*/
-SELECT ANAME, AVG(gehalt)
-FROM ABT
-INNER JOIN PERS USING (ANR);
+SELECT aname, AVG(gehalt) 
+FROM abt 
+INNER JOIN pers USING(anr) 
+GROUP BY aname;
 
 ```
