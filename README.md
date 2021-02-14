@@ -490,7 +490,22 @@ All Eyez on me  2017
 ________________________
 */
 ```
+## Sub-Queries 
 
+```sql
+SELECT vorname,nachname, gehalt FROM Mitarbeiter
+WHERE gehalt >
+(SELECT max(gehalt) FROM Mitarbeiter
+WHERE vorname='Alexander');
+```
+
+```sql
+SELECT per_nr, ab_datum
+FROM abflug
+WHERE f_bez
+IN 
+(SELECT f_bez FROM flug WHERE s_ort='Luxemburg');
+```
 # Beispielaufgaben
 
 ## Abteilungen und Mitarbeiter
