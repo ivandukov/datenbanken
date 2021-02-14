@@ -366,7 +366,7 @@ FROM Mitarbeiter;
 
 ## GROUP BY
 
-Wenn man Spaltenfunktionen (z.B: SUM()) 
+Wenn man Spaltenfunktionen (z.B: SUM()) benutzt und dabei noch andere Attribute haben möchte: 
 
 ```sql
 SELECT COUNT(a) AS anzahl FROM basket_a /*Funktioniert wie gewohnt*/
