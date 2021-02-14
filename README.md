@@ -50,8 +50,14 @@ DROP TABLE Mitarbeiter CASCADE;
 ## ALTER TABLE
 
 ```sql
+/*Neues Attribut anlegen*/
 ALTER TABLE Mitarbeiter ADD Kinder INT;
+
+/*Attribut löschen*/
 ALTER TABLE Mitarbeiter DROP Kinder;
+
+/*Default-Wert setzen*/
+ALTER TABLE Mitarbeiter ADD Bonus DECIMAL DEFAULT 0.00; 
 ```
 
 ## CONSTRAINTS
