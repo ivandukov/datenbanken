@@ -348,6 +348,15 @@ ON fruit_a = fruit_b;
 
 "The USING clause is a shortcut that allows you to take advantage of the specific situation where both sides of the join use the same name for the joining column(s). It takes a comma-separated list of the shared column names and forms a join condition that includes an equality comparison for each one. For example, joining ```T1``` and ```T2``` with ```USING (a, b)``` produces the join condition ```ON T1.a = T2.a AND T1.b = T2.b.```"
 
+### "Manueller Join"
+
+```sql
+SELECT ab.f_bez, ab.ab_datum, m.name, f.start, f.ziel 
+FROM Mitarbeiter m, Abflug ab, Flug f
+WHERE m.personalnr = ab.personalnr
+AND ab.f_bez = f.f_bez;
+```
+
 ## Spaltenfunktionen
 
 ```sql
