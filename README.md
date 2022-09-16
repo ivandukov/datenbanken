@@ -1,4 +1,4 @@
-# SQL Cheat Sheet
+# SQL (Standard Query Language) Cheat Sheet
 
 ## Datentypen
 
