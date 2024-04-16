@@ -2,67 +2,89 @@
 
 ## Datentypen
 
-- **INT** (integer4, int)
-- **SMALLINT** (integer2)
-- **REAL** (wie float)
-- **DECIMAL(p,q)** und **NUMERIC**(p,q) mit jeweils p Stellen gesamt und davon q Nachkommastellen
-- **CHAR(n)** für Strings fester Länge n
-- **VARCHAR(n)** für Strings variabler Länge bis zur max. Länge n
-- **BIT(n)** oder **BIT VARYING(n)** analog für Bitfolgen
-- **DATE, TIME/TIMESTAMP** für Datum-, Zeit- & kombinierte Datums-Zeit-Angaben
-- **BLOB** für sehr große binäre Dateien
-- **TEXT** für sehr große Strings
+| Datentyp               | Größe    | Beschreibung                                                  | Intervall                                                |
+|------------------------|----------|---------------------------------------------------------------|----------------------------------------------------------|
+| SMALLINT               | 2 bytes  | kleiner Intervall für Integer                                 | -32.768 bis +32.767                                      |
+| INT                    | 4 bytes  | typische Wahl für Integer                                     | -2.147.483.648 bis +2.147.483.647                        |
+| BIGINT                 | 8 bytes  | großer Intervall für Integer                                  | -9.223.372.036.854.775.808 bis +9223.372.036.854.775.807 |
+| REAL                   | 4 bytes  | vergleichbar mit float in anderen Sprachen                    | 6 Dezimalstellen Genauigkeit                             |
+| DECIMAL(a, b)          | variabel | mit a Stellen und b Nachkommastellen                          | bis 131072 vor Dezimalpunkt, bis 16383 nach Dezimalpunkt |
+| NUMERIC(a, b)          | variabel | mit a Stellen und b Nachkommastellen                          | bis 131072 vor Dezimalpunkt, bis 16383 nach Dezimalpunkt |
+| CHAR(n)                | variabel | für Strings fester Länge n                                    | 1 - 10.485.760                                           |
+| VARCHAR(n)             | variabel | für Strings variabler Länge bis zu max. Länge n               | variabel                                                 |
+| TEXT                   | variabel | für sehr große Strings geeignet                               | unendlich                                                |
+| BOOLEAN                | 1 byte   | Datentyp mit zwei Zuständen (true/false)                      | TRUE, FALSE, NULL                                        |
+| BIT(n)                 | variabel | für Bitfolgen                                                 | unendlich                                                |
+| BIT(n) oder VARYING(n) | variabel | für Bitfolgen                                                 | unendlich                                                |
+| DATE                   | 4 bytes  | für Datum-, Zeit- und kombinierte Datum-Zeit-Angaben geeignet | 4713 BC bis 5874897 AD                                   |
+| BLOB                   | variabel | für sehr große binäre Dateien geeignet                        | unendlich                                                |
 
 ## CREATE
-
+Erzeugt eine Tabelle
 ```sql
-CREATE TABLE Mitarbeiter
+CREATE TABLE mitarbeiter
 (
-    personalnummer INT,
+    id INT,
     vorname VARCHAR(20),
     nachname VARCHAR(20),
-    geburtsdatum DATE
+    geburtsdatum DATE,
     gehalt DECIMAL
 );
 ```
 
 ## INSERT 
-
+Fügt einer Tabelle Zeilen hinzu
 ```sql
-INSERT INTO Mitarbeiter
-VALUES (1,'Gordon', 'Freeman','2018-01-10', 100.0);
+INSERT INTO mitarbeiter VALUES 
+    (1, 'Gordon', 'Freeman','1980-01-10', 100.0),
+    (2, 'Isaac', 'Kleiner', '1950-05-14', 250.0);
 ```
 
 ## DROP TABLE 
-
-- RESTRICT: Tabelle wird nur gelöscht, wenn sie von keiner anderen referenziert wird
+Tabelle wird gelöscht. Wenn die Zeilen entfernt werden sollen, ohne die Tabelle zu löschen, sollte ```DELETE``` oder ```TRUNCATE``` verwendet werden. 
 
 ```sql
-DROP TABLE Mitarbeiter RESTRICT;
+DROP TABLE mitarbeiter;
 ```
 
-- CASCADE: Gesamte Tabelle, sowie FK-Constraints der referenzierenden Tabelle(n) werden gelöscht
+Es können auch mehrere Tabellen gelöscht werden
 
 ```sql
-DROP TABLE Mitarbeiter CASCADE;
+DROP TABLE tabelle1, tabelle2, tabelle3;
+```
+
+### RESTRICT
+Tabelle wird nur gelöscht, wenn sie von keiner anderen referenziert wird
+```postgres
+DROP TABLE mitarbeiter RESTRICT;
+```
+
+### CASCADE
+Gesamte Tabelle, sowie FK-Constraints der referenzierenden Tabelle(n) werden gelöscht
+```postgres
+DROP TABLE mitarbeiter CASCADE;
 ```
 
 ## ALTER TABLE
 
+### Neues Attribut hinzufügen
 ```sql
-/*Neues Attribut anlegen*/
-ALTER TABLE Mitarbeiter ADD Kinder INT;
+ALTER TABLE mitarbeiter ADD anzahl_kinder INT;
+```
 
-/*Attribut löschen*/
-ALTER TABLE Mitarbeiter DROP Kinder;
+### Attribut löschen
+```sql
+ALTER TABLE mitarbeiter DROP anzahl_kinder;
+```
 
-/*Default-Wert setzen*/
-ALTER TABLE Mitarbeiter ADD Bonus DECIMAL DEFAULT 0.00; 
+### Default-Wert festlegen
+```sql
+ALTER TABLE mitarbeiter ADD bonus DECIMAL DEFAULT 0.00;
 ```
 
 ## CONSTRAINTS
 
-Statische Integritätsbed. auf Tabellen (bzgl. Attributen):
+Statische Integritätsbedingungen auf Tabellen (bzgl. Attributen):
 
 - **NOT NULL**: Verbot von Nullwerten
 - **DEFAULT**: Standard-Werte
@@ -71,153 +93,154 @@ Statische Integritätsbed. auf Tabellen (bzgl. Attributen):
 - **CHECK**: Nachbedingung
 
 ```sql
-CREATE TABLE VERLAG
+CREATE TABLE verlag
 (
-    VerlagsID   INT,
-    Verlagsname VARCHAR(15)
-    CONSTRAINT c_VerlagPK PRIMARY KEY (Verlagsname)
+    id   INT,
+    name VARCHAR(15),
+    CONSTRAINT c_VerlagPK PRIMARY KEY (name)
 );
 
-CREATE TABLE Buch
+CREATE TABLE buch
 (
-    ISBN    CHAR(10) NOT NULL,
-    Auflage SMALLINT DEFAULT 1,
-    Jahr    INT NOT NULL,
-    Verlag  VARCHAR(15) 
-    CONSTRAINT c_BuchPK PRIMARY KEY (ISBN, Auflage),
+    isbn    CHAR(10) NOT NULL,
+    auflage SMALLINT DEFAULT 1,
+    jahr    INT NOT NULL,
+    verlag_name  VARCHAR(15),
+    CONSTRAINT c_buchPK PRIMARY KEY (ISBN, Auflage),
     CONSTRAINT c_checkAuflage CHECK (Auflage > 0),
     CONSTRAINT c_checkJahr (Jahr BETWEEN 1800 AND 2060)
 );
+```
 
-ALTER TABLE Buch
-    ADD CONSTRAINT c_BuchFK FOREIGN KEY(Verlag) REFERENCES Verlag(Verlagsname)
-    ON DELETE RESTRICT ON UPDATE RESTRICT; /*Man kann also nichts an diesem FK ändern (RESTRICT)*/
+```postgres
+ALTER TABLE buch
+    ADD CONSTRAINT c_buchFK FOREIGN KEY(verlag) REFERENCES verlag(name)
+    ON DELETE RESTRICT ON UPDATE RESTRICT; /*man kann nichts an diesem FK ändern*/
 
-ALTER TABLE Buch 
+ALTER TABLE buch 
     DROP CONSTRAINT c_checkJahr;
 ```
 
 ## TRUNCATE
 
-- Löscht Tabellen**inhalte**, nicht die Tabellenstruktur selbst!
-- Berücksichtigt keine ON DELETE-Trigger, kann also nicht angewandt werden für Tabellen, die von anderen Tabellen referenziert werden
+- Löscht alle Zeilen, jedoch nicht die Tabelle selbst
+- Berücksichtigt keine ```ON DELETE```-Trigger, kann also nicht für Tabellen angewandt werden , die von anderen Tabellen referenziert werden
 
 ```sql
-TRUNCATE TABLE Buch;
+TRUNCATE TABLE buch;
 ```
 
 ## SELECT
+- Suchen von Informationen aus Tabellen
+- Ergebnis ist wieder eine Tabelle (**Relation**)
 
-- Mit Hilfe des Select-Operators können Informationen aus der Datenbank ausgelesen werden.
-
-- Das Ergebnis jeder SELECT-Operation ist wieder eine Tabelle (Relation).
-
-- Ein SELECT-Ausdruck besteht neben dem SELECT-Operator aus mehreren Klauseln:
-    FROM ..., WHERE ..., GROUP BY ..., HAVING ..., ORDER BY ... .
-
-1. Selektieren alle Spalten einer Tabelle (DISTINCT)
-
-- DISTINCT bewirkt, dass doppelte Zeilen aus der Ergebnis-tabelle eliminiert werden
+### DISTINCT
+bewirkt, dass doppelte Zeilen nicht in der Ergebnis-Tabelle erscheinen
 
 ```sql
-SELECT DISTINCT * FROM Mitarbeiter;
+SELECT DISTINCT nachname 
+FROM mitarbeiter;
 ```
 
-2. Umbenennung der projizierten Spalten
+### AS 
+
+ermöglicht das Umbenennen von Ergebnis-Spalten
 
 ```sql
-SELECT Name as Username from Mitarbeiter;
+SELECT vorname AS username 
+FROM mitarbeiter;
 ```
 
-3. SELECT mit arithmetischen Ausdrücken
-
-- Als arithmetische Operatoren mit Klammern “(” bzw. “)” stehen zur Verfügung:
-    +, –, *, / , power(<Attribut>,<potenz>).
-
-- Hat einer der Operanden einen unbekannten Wert (= NULL), dann ist auch das Ergebnis der arithmetischen Operation unbekannt. 
+### Arithmetische Operatoren
+Hat einer der Operanden einen unbekannten Wert (=NULL), dann ist auch das Ergebnis der arithmetischen Operation unbekannt
 
 ```sql
-SELECT per_nr AS PersonalNr,
-gehalt AS "altes Gehalt",
-gehalt * 1.05 AS "neues Gehalt"
-FROM angestellter;
+SELECT id AS personalNr,
+gehalt AS gehalt_alt,
+gehalt * 1.05 AS gehalt_neu
+FROM mitarbeiter;
 ```
 
-4. Skalare Ausdrücke
+### Skalare Ausdrücke
 
 - numerischen Wertebereichen: etwa +, −, und /
 - Strings: Operationen wie char_length (aktuelle Länge eines Strings), Konkatenation || und substring (Suchen einer Teilzeichenkette an bestimmten Positionen des Strings)
 - Datumstypen und Zeitintervallen: Operationen wie current_date (aktuelles Datum),current_time (aktuelle Zeit), +, − und *
 
-- Berechnung der Länge des Ersatzteilbezeichners.
+### IN
 
 ```sql
-SELECT e_nr, e-bez, length(e_bez) as clength
-FROM eteil
+SELECT vorname, nachname
+FROM mitarbeiter
+WHERE geburtstag IN ('13.05.1970', '14.05.1980');
 ```
 
-5. Selektion auf Mengen
+### IS NULL
 
 ```sql
-SELECT ab_datum, f_bez
-FROM abflug
-WHERE ab_datum IN ('13.05.01', '14.05.01');
+SELECT * FROM mitarbeiter
+WHERE id IS NULL
+OR vorname IS NULL
+OR nachname IS NULL;
 ```
-6. Selektion Prüfung auf NULL
+
+### LIKE
 
 ```sql
-/*Alle Tupel, in denen ein Tupel-Element NULL ist*/
-SELECT * FROM MCUDATA
-WHERE heroname IS NULL
-OR moviename IS NULL
-OR releaseyear IS NULL;
+SELECT vorname, nachname
+FROM mitarbeiter
+WHERE vorname LIKE 'Jenny%';
 ```
-
-## LIKE Clause
-
-```sql
-SELECT first_name, last_name
-FROM customer
-WHERE first_name LIKE 'Jenny%';
-```
-Patterns:
 
 ```sql
 SELECT
 	'foo' LIKE 'foo', -- true
-	'foo' LIKE 'f%', -- true
+	'foo' LIKE 'f%',  -- true
 	'foo' LIKE '_o_', -- true
-	'bar' LIKE 'b_'; -- false
+	'bar' LIKE 'b_';  -- false
 ```
 
-## ORDER BY
+### ORDER BY
 ```sql
-SELECT vorname, nachname FROM Mitarbeiter ORDER BY nachname;
+SELECT vorname, nachname 
+FROM mitarbeiter 
+ORDER BY nachname;
 ```
-Mit Spaltenfunktion:
+
+mit Spaltenfunktion:
 
 ```sql
-/*Sortiert alle Filmnamen nach Namenslänge absteigend*/
-SELECT moviename FROM MCUDATA
-ORDER BY LENGTH(moviename) asc;
+/*Sortiert alle Nachnamen absteigend nach Länge*/
+SELECT nachname FROM mitarbeiter
+ORDER BY LENGTH(nachname) asc;
 ```
+
 ## UPDATE
+```sql
+UPDATE mitarbeiter SET gehalt = 50.00 
+WHERE nachname = 'Freeman';
+```
 
 ```sql
-UPDATE Mitarbeiter SET gehalt = 50.00 WHERE nachname = 'Freeman';
-UPDATE Mitarbeiter SET gehalt = gehalt * 2 WHERE vorname = 'Gordon';
+UPDATE mitarbeiter SET gehalt = gehalt * 2 
+WHERE vorname = 'Gordon';
 ```
 
 ## DELETE
 
+Einzelne Zeile löschen
 ```sql
-DELETE FROM Mitarbeiter WHERE personalnummer = 123; /*Löscht einzelne Zeile*/
-DELETE FROM Mitarbeiter /*Löscht alle Datensätze, aber nicht die Tabelle*/
+DELETE FROM mitarbeiter 
+WHERE id = 123;
+```
+
+Alle Zeilen löschen, ohne Tabelle zu löschen
+
+```sql
+DELETE FROM mitarbeiter;
 ```
 
 ## JOIN
-
-Varianten: 
 - **(INNER) JOIN**: Returns records that have matching values in BOTH tables
 - **LEFT (OUTER) JOIN**: Returns all records from the LEFT table and the matched records from the RIGHT table
 - **RIGHT (OUTER) JOIN**: Returns all records from the RIGHT table and the matched records from the LEFT table 
@@ -225,293 +248,216 @@ Varianten:
 
 ![](joins.PNG)
 
-Beispiel:
+### Beispiel
 
 ```sql
-CREATE TABLE basket_a
+CREATE TABLE popular_films
 (
-    a INT PRIMARY KEY,
-    fruit_a VARCHAR(100) NOT NULL
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE basket_b
+CREATE TABLE watchlist
 (
-    b INT PRIMARY KEY,
-    fruit_b VARCHAR(100) NOT NULL
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
 );
 ```
 
-basket_a hat:
-
-- (1, 'Apple')
-- (2, 'Orange')
-- (3, 'Banana')
-- (4, 'Mango')
-
-basket_b hat:
-
-- (1, 'Orange')
-- (2, 'Apple')
-- (3, 'Watermelon')
-- (4, 'Pear')
-
-### **INNER JOIN**:
-
 ```sql
-SELECT a, fruit_a, b, fruit_b 
-FROM basket_a 
-INNER JOIN basket_b ON fruit_a = fruit_b;
+INSERT INTO popular_films VALUES
+	(1, 'Arielle'),
+  	(2, 'Pocahontas'),
+  	(3, 'Mulan'),
+  	(4, 'Aladin');
 
-/* Ausgabe:
-   a    fruit_a    b    fruit_b
-   ============================
-   1    Apple      2    Apple 
-   ____________________________ 
-   2    Orange     1    Orange 
-*/
+INSERT INTO watchlist VALUES
+  	(5, 'Arielle'),
+  	(6, 'Pocahontas'),
+  	(7, 'Shrek'),
+  	(8, 'Cars');
 ```
 
-```INNER JOIN``` vergleicht jedes ```fruit_a``` aus ```basket_a``` mit jedem ```fruit_b``` aus ```basket_b```. Wenn welche gleich sind, werden sie jeweils in einer neuen Zeile ausgegeben. 
-
-### **LEFT JOIN**:
-
+### INNER JOIN
 ```sql
-SELECT a, fruit_a, b, fruit_b 
-FROM basket_a 
-LEFT JOIN basket_b ON fruit_a = fruit_b;
-
-/* Ausgabe:
-   a    fruit_a    b    fruit_b
-   ============================
-   1    Apple      2    Apple 
-   ____________________________ 
-   2    Orange     1    Orange 
-   ____________________________
-   3    Banana    null  null
-   ____________________________
-   4    Mango     null  null
-*/
+SELECT * FROM popular_films 
+INNER JOIN watchlist ON popular_films.name = watchlist.name;
 ```
 
-```LEFT JOIN ``` vergleicht jedes ```fruit_a``` aus ```basket_a``` mit jedem ```fruit_b``` aus ```basket_b```. Wenn sie gleich sind werden sie wie bei ```INNER JOIN``` als eine Zeile ausgegeben. Jedoch wird auch eine neue Zeile gemacht, wenn sie NICHT gleich sind (siehe null Werte).
+```
+| popular_films.id | popular_films.name | watchlist.id | watchlist.name |
+|------------------|--------------------|--------------|----------------|
+| 1                | Arielle            | 5            | Arielle        |
+| 2                | Pocahontas         | 6            | Pocahontas     |
+```
+
+### LEFT JOIN
+```sql
+SELECT * FROM popular_films 
+LEFT JOIN watchlist ON popular_films.name = popular_films.name;
+```
+
+```
+| popular_films.id | popular_films.name | watchlist.id  | watchlist.name  |
+|------------------|--------------------|---------------|-----------------|
+| 1                | Arielle            | 5             | Arielle         |
+| 2                | Pocahontas         | 6             | Pocahontas      |
+| 3                | Mulan              | null          | null            |
+| 4                | Aladin             | null          | null            |
+```
 
 ### RIGHT JOIN
-
 ```sql
-SELECT a, fruit_a, b, fruit_b 
-FROM basket_a 
-RIGHT JOIN basket_b ON fruit_a = fruit_b;
-
-/* Ausgabe:
-   a    fruit_a    b    fruit_b
-   ============================
-   2    Orange     1   Orange 
-   ____________________________ 
-   1    Apple      2   Apple 
-   ____________________________
-   null  null      3   Watermelon
-   ____________________________
-   null  null      4   Pear
-*/
+SELECT * FROM popular_films 
+RIGHT JOIN watchlist ON popular_films.name = watchlist.name
 ```
 
-```RIGHT JOIN ``` vergleicht jedes ```fruit_a``` aus ```basket_a``` mit jedem ```fruit_b``` aus ```basket_b```. Wenn sie gleich sind werden sie wie bei ```INNER JOIN``` als eine Zeile ausgegeben. Jedoch wird auch eine neue Zeile gemacht, wenn sie NICHT gleich sind (siehe null Werte).
+```
+| popular_films.id | popular_films.name | watchlist.id  | watchlist.name  |
+|------------------|--------------------|---------------|-----------------|
+| 1                | Arielle            | 5             | Arielle         |
+| 2                | Pocahontas         | 6             | Pocahontas      |
+| null             | null               | 7             | Shrek           |
+| null             | null               | 8             | Cars            |
+```
 
 ### FULL OUTER JOIN
 
 ```sql
-SELECT a, fruit_a, b, fruit_b
-FROM basket_a
-FULL OUTER JOIN basket_b
-ON fruit_a = fruit_b;
-
-/* Ausgabe:
-   a    fruit_a    b    fruit_b
-   ===============================
-   1    Apple      2    Apple 
-   _______________________________ 
-   2    Orange     1    Orange 
-   _______________________________
-   3    Banana    null   null  
-   _______________________________
-   4    Mango     null   null
-   _______________________________
-   null  null      3    Watermelon
-   _______________________________
-   null  null      4    Pear
-*/
+SELECT * FROM popular_films 
+FULL OUTER JOIN watchlist ON popular_films.name = watchlist.name
 ```
 
-```FULL OUTER JOIN ``` gibt alle Zeilen aus beiden Tabellen aus wenn sie gleich und ungleich sind. 
+```
+| popular_films.id | popular_films.name | watchlist.id  | watchlist.name  |
+|------------------|--------------------|---------------|-----------------|
+| 1                | Arielle            | 5             | Arielle         |
+| 2                | Pocahontas         | 6             | Pocahontas      |
+| 3                | Mulan              | null          | null            |
+| 4                | Aladin             | null          | null            |
+| null             | null               | 7             | Shrek           |
+| null             | null               | 8             | Cars            |
+```
 
-### USING Clause:
+### USING
 
-"The USING clause is a shortcut that allows you to take advantage of the specific situation where both sides of the join use the same name for the joining column(s). It takes a comma-separated list of the shared column names and forms a join condition that includes an equality comparison for each one. For example, joining ```T1``` and ```T2``` with ```USING (a, b)``` produces the join condition ```ON T1.a = T2.a AND T1.b = T2.b.```"
+The ```USING``` clause is a shortcut that allows you to take advantage of the specific situation where both sides of the join use the same name for the joining column(s). 
 
-### "Manueller Join"
+It takes a comma-separated list of the shared column names and forms a join condition that includes an equality comparison for each one. For example, joining ```T1``` and ```T2``` with ```USING (a, b)``` produces the join condition ```ON T1.a = T2.a AND T1.b = T2.b.```
 
 ```sql
-SELECT ab.f_bez, ab.ab_datum, m.name, f.start, f.ziel 
-FROM Mitarbeiter m, Abflug ab, Flug f
-WHERE m.personalnr = ab.personalnr
-AND ab.f_bez = f.f_bez;
+SELECT * FROM popular_films INNER JOIN watchlist USING(name);
+```
+
+### Manueller Join
+
+```sql
+SELECT popular_films.name, watchlist.name
+FROM popular_films popular_film, watchlist watchlist_film
+WHERE popular_film.name = watchlist_film.name
+AND popular_film.id = watchlist_film.id;
 ```
 
 ## Spaltenfunktionen
-
+### COUNT
 ```sql
 SELECT COUNT(*) AS anzahl_Mitarbeiter 
-FROM Mitarbeiter;
+FROM mitarbeiter;
+```
 
+```sql
 SELECT COUNT(DISTINCT vorname) AS distinct_vorname
-FROM Mitarbeiter;
+FROM mitarbeiter;
+```
 
+### SUM
+```sql
 SELECT SUM(gehalt) AS summe_gehalt
-FROM Mitarbeiter;
+FROM mitarbeiter;
+```
 
+### AVG
+```sql
 SELECT AVG(gehalt) AS avg_gehalt
-FROM Mitarbeiter;
+FROM mitarbeiter;
+```
 
+### MIN
+```sql
 SELECT MIN(gehalt) AS max_gehalt
-FROM Mitarbeiter;
+FROM mitarbeiter;
+```
 
+### MAX
+```sql
 SELECT MAX(gehalt) AS min_gehalt
-FROM Mitarbeiter;
+FROM mitarbeiter;
 ```
 
 ## GROUP BY
 
-Wenn man Spaltenfunktionen (z.B: SUM()) benutzt und dabei noch andere Attribute haben möchte: 
+Wenn man Spaltenfunktionen (z.B. ```SUM()```) nutzt und dabei noch andere Attribute haben möchte: 
 
 ```sql
-SELECT COUNT(a) AS anzahl FROM basket_a /*Funktioniert wie gewohnt*/
-SELECT fruit_a, COUNT(a) AS anzahl FROM basket_a GROUP BY a; /*ohne GROUP BY würde dieses Statement nicht funktionieren*/
+/* funktioniert wie gewohnt */
+SELECT COUNT(id) AS anzahl 
+FROM popular_films; 
+```
+
+```sql
+/* ohne GROUP BY würde es nicht funktionieren */
+SELECT popular_films, COUNT(id) AS anzahl 
+FROM popular_films 
+GROUP BY id; 
 ```
 
 ## HAVING
 
 Folgendes ist wichtig für ```GROUP BY```:
-
 - ```WHERE``` filtert auf **Zeilenebene VOR** dem Gruppieren
-
 - ```HAVING``` filtert auf **Gruppenebene NACH** dem Gruppieren
 
 Beispiel:
 
 ```sql
 SELECT vorname, nachname, AVG(gehalt) AS average
-FROM Mitarbeiter
+FROM mitarbeiter
 WHERE geburtsdatum IN ('13.05.01','14.05.01') /*filtert alle Mitarbeiter mit Geburtstag am 13.5.01 und 14.05.01 VOR dem internen SORT und GROUP BY*/
 GROUP BY nachname
 HAVING AVG(gehalt) > 12000.0; /*filtert alle Nachnamen mit AVG(gehalt) > 12000 NACH dem internene SORT und GROUP BY*/
 ```
 ## Mengenoperationen
 
-- **Vereinigung**: 
+### INTERSECT
 ```sql
-SELECT... FROM... WHERE...
-UNION 
-SELECT... FROM... WHERE...
-```
-- **Differenz**:
-```sql
-SELECT... FROM... WHERE...
-EXCEPT 
-SELECT... FROM... WHERE...
-```
-- **Durchschnitt**:
-```sql
-SELECT... FROM... WHERE...
-INTERSECT 
-SELECT... FROM... WHERE...
-```
-
-Beispiel:
-
-```sql
-CREATE TABLE top_rated_films
-(
-    title VARCHAR(50) NOT NULL,
-    release_year INT
-);
-
-CREATE TABLE most_popular_films
-(
-    title VARCHAR(50) NOT NULL,
-    release_year INT
-);
-```
-
-top_rated_films:
-
-- (Matrix, 1999)
-- (IT, 2017)
-- (Shrek, 2001)
-- (The Godfather, 1972)
-
-most_popular_films:
-- (Shrek, 2001)
-- (All eyez on Me, 2017)
-- (The Godfather, 1972)
-
-
-### **INTERSECT**
-```sql
-SELECT * FROM most_popular_films
+SELECT * FROM popular_films
 INTERSECT
-SELECT * FROM top_rated_films
-
-/* Ausgabe:
-    title           release_year
-    ========================
-    Shrek           2001
-    ________________________
-    The Godfather   1972
-*/
+SELECT * FROM watchlist
 ```
 
-### **UNION**
+### UNION
 ```sql
-SELECT * FROM most_popular_films
+SELECT * FROM popular_films
 UNION
-SELECT * FROM top_rated_films
-
-/* Ausgabe:
-title           release_year
-========================
-Shrek           2001
-________________________
-The Godfather   1972
-________________________
-Matrix          1999
-________________________
-All Eyez on me  2017
-________________________
-IT              2017 
-*/
+SELECT * FROM watchlist
 ```
 
-### **EXCEPT**
+### EXCEPT
 
 ```sql
-SELECT * FROM most_popular_films
+SELECT * FROM popular_films
 EXCEPT
-SELECT * FROM top_rated_films
-
-/* Ausgabe:
-title           release_year
-========================
-All Eyez on me  2017
-________________________
-*/
+SELECT * FROM watchlist
 ```
-## Sub-Queries 
+
+## Geschachtelte Query 
 
 ```sql
-SELECT vorname,nachname, gehalt FROM Mitarbeiter
+SELECT vorname, nachname, gehalt 
+FROM mitarbeiter
 WHERE gehalt >
-(SELECT max(gehalt) FROM Mitarbeiter
-WHERE vorname='Alexander');
+(SELECT max(gehalt) FROM mitarbeiter
+WHERE vorname = 'Alexander');
 ```
 
 ```sql
@@ -519,49 +465,66 @@ SELECT per_nr, ab_datum
 FROM abflug
 WHERE f_bez
 IN 
-(SELECT f_bez FROM flug WHERE s_ort='Luxemburg');
+(SELECT f_bez FROM flug WHERE s_ort = 'Luxemburg');
 ```
-# Beispielaufgaben
 
-## Abteilungen und Mitarbeiter
+# Fortgeschrittene Beispiele
+
 ![](beispieltabelle.png)
 
+Finden Sie alle Abteilungsorte
 ```sql
-/*Finden Sie alle Abteilungsorte*/
-SELECT AORT FROM ABT;
+SELECT aort FROM abt;
+```
 
-/*Finden Sie alle Angestellten (PNR, NAME), deren Manager die 
-Personalnummer 406 hat (MNR).*/
-SELECT PNR, NAME FROM PERS WHERE MNR = 406;
+Finden Sie alle Angestellten (PNR, NAME), deren Manager die 
+Personalnummer 406 hat (MNR).
+```sql
+SELECT pnr, name 
+FROM pers 
+WHERE mnr = 406;
+```
 
-/*Finden Sie alle Angestellten (PNR, ALTER, NAME), 
+Finden Sie alle Angestellten (PNR, ALTER, NAME), 
 die in einer Abteilung in Frankfurt arbeiten und 
 eine Personalnummer zw. 100 und 800 haben, sowie 
 ein Gehalt über 40k haben ODER 
-unter 30 sind*/
-SELECT PNR, ALTER, NAME FROM PERS 
-INNER JOIN ABT USING (ANR)
+unter 30 sind.
+```sql
+SELECT pnr, ALTER, NAME 
+FROM pers 
+INNER JOIN abt USING (anr)
 WHERE 
-(AORT = 'Frankfurt' AND PNR BETWEEN 100 AND 800)
-AND (GEHALT > 40000 OR ALTER < 30);
+(aort = 'Frankfurt' AND pnr BETWEEN 100 AND 800)
+AND (gehalt > 40000 OR alter < 30);
+```
 
-/*Finden Sie die Personalnummer des Chefs der Personalnummer 574*/
-SELECT MNR FROM PERS WHERE PNR = 574;
+Finden Sie die Personalnummer des Chefs der Personalnummer 574
+```sql
+SELECT mnr 
+FROM pers 
+WHERE pnr = 574;
+```
 
-/*Finden Sie alle Angestellten, deren Abteilungsort ein „a“ im Namen hat*/
-SELECT * FROM PERS 
-INNER JOIN ABT USING(ANR)
-WHERE ABT.ORT LIKE '%a%';
+Finden Sie alle Angestellten, deren Abteilungsort ein „a“ im Namen hat
+```sql
+SELECT * FROM pers 
+INNER JOIN abt USING(anr)
+WHERE abt.ort LIKE '%a%';
+```
 
-/*Finden Sie alle Abteilungsorte, an denen kein Mitarbeiter arbeitet.*/
-SELECT AORT FROM ABT 
-LEFT JOIN PERS USING (ANR) /*Ungleiche Werte werden mit null angezeigt!!!*/
-WHERE PERS.PNR IS NULL;
+Finden Sie alle Abteilungsorte, an denen kein Mitarbeiter arbeitet.
+```sql
+SELECT aort 
+FROM abt 
+LEFT JOIN pers USING (anr)
+WHERE pers.pnr IS NULL;
+```
 
-/*Finden Sie das durchschnittliche Gehalt aller Abteilungen*/
+Finden Sie das durchschnittliche Gehalt aller Abteilungen
+```sql
 SELECT aname, AVG(gehalt) 
 FROM abt 
 INNER JOIN pers USING(anr) 
 GROUP BY aname;
-
 ```
